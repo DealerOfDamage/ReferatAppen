@@ -3,7 +3,7 @@
 En cross-platform mobilapp (iOS & Android) bygget med Expo/React Native til at indsamle en dansk dagsorden, optage møder og transskribere lokalt med efterfølgende matching mod dagsordenspunkter.
 
 ## Funktioner
-- **Dagsorden**: Tilføj via kamera + OCR eller manuelt tekstinput, derefter aktiveres optagelsesflowet.
+- **Dagsorden**: Tilføj via kamera + OCR (på enheden med ML Kit) eller manuelt tekstinput, derefter aktiveres optagelsesflowet.
 - **Optagelse**: Start/stop optagelse fra hovedskærmen; status vises tydeligt.
 - **Transskription & matching**: Efter stop behandles optagelsen (placeholder Whisper-kald) og resultaterne vises pr. dagsordenpunkt med muligheder for deling eller ny optagelse.
 - **Dansk UI**: Hele appen er på dansk og fokuserer på enkel betjening med tre store knapper på hovedskærmen.
@@ -26,4 +26,4 @@ En cross-platform mobilapp (iOS & Android) bygget med Expo/React Native til at i
 - Hvis npm melder om `peer react-native@"0.74.x"`, skyldes det typisk en forældet `@types/react-native`. Opdatér den til `0.76.6` eller nyere, og geninstaller afhængighederne.
 - Hvis du får netværksfejl som `EAI_AGAIN` eller `403 Forbidden` under installation, er det normalt ikke et kodeproblem. Tjek din proxy-/firewallkonfiguration, fjern gamle miljøvariabler som `http_proxy`/`https_proxy`, og prøv igen med projektets bundne versioner (`npm install` i roden frem for `npm install expo@46`).
 
-> Bemærk: OCR og Whisper-kald er beskrevet i koden som stub-implementeringer. Integrér enhedens kamera/medie-API'er samt et on-device Whisper-build for produktionsbrug.
+> Bemærk: Kamera + OCR kører nu on-device via Expo ML Kit, mens Whisper/transskription stadig er stubbet. Integrér et on-device Whisper-build for produktionsbrug.
