@@ -1,5 +1,7 @@
 import React, { useState } from 'react';
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
+import * as ImagePicker from 'expo-image-picker';
+import { scanFromURLAsync } from 'expo-mlkit-ocr';
 import { NativeStackScreenProps } from '@react-navigation/native-stack';
 import { RootStackParamList } from '../../App';
 import LargeButton from '../components/LargeButton';
@@ -11,6 +13,8 @@ const AgendaScreen: React.FC<AgendaScreenProps> = ({ navigation }) => {
   const { setAgenda } = useAppState();
   const [manualText, setManualText] = useState('');
   const [ocrText, setOcrText] = useState('');
+  const [isScanning, setIsScanning] = useState(false);
+  const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
 
   const parseAgenda = (text: string): AgendaItem[] =>
     text
@@ -19,9 +23,55 @@ const AgendaScreen: React.FC<AgendaScreenProps> = ({ navigation }) => {
       .filter(Boolean)
       .map((row, index) => ({ id: `agenda-${index}`, text: row }));
 
-  const handleCameraOcr = () => {
-    setOcrText('Status på projektet\nBudgetopfølgning\nNæste skridt');
-    Alert.alert('Kamera + OCR', 'Et eksempel på dagsorden er hentet fra billedet.');
+  const ensureCameraAccess = async () => {
+    const permission = cameraPermission ?? (await requestCameraPermission());
+    if (!permission?.granted) {
+      const newPermission = await requestCameraPermission();
+      if (!newPermission.granted) {
+        Alert.alert('Kameratilladelse', 'Aktivér kameratilladelse for at scanne dagsordenen.');
+        return false;
+      }
+    }
+    return true;
+  };
+
+  const handleCameraOcr = async () => {
+    const canUseCamera = await ensureCameraAccess();
+    if (!canUseCamera) return;
+
+    const capture = await ImagePicker.launchCameraAsync({
+      allowsEditing: false,
+      quality: 1,
+      base64: false,
+    });
+
+    if (capture.canceled || !capture.assets?.length) return;
+
+    setIsScanning(true);
+
+    try {
+      const imageUri = capture.assets[0]?.uri;
+      if (!imageUri) {
+        throw new Error('Billedet kunne ikke gemmes.');
+      }
+
+      const result = await scanFromURLAsync(imageUri);
+      const extractedText = result.blocks.map((block) => block.text).join('\n').trim();
+
+      if (!extractedText) {
+        Alert.alert('Ingen tekst fundet', 'Prøv igen i bedre lys eller fokuser på teksten.');
+        return;
+      }
+
+      setOcrText(extractedText);
+      setManualText(extractedText);
+      Alert.alert('Kamera + OCR', 'Teksten er hentet fra billedet. Juster teksten om nødvendigt.');
+    } catch (error) {
+      console.error('OCR-fejl', error);
+      Alert.alert('OCR mislykkedes', 'Teksten kunne ikke læses. Prøv igen.');
+    } finally {
+      setIsScanning(false);
+    }
   };
 
   const handleSave = () => {
@@ -44,7 +94,7 @@ const AgendaScreen: React.FC<AgendaScreenProps> = ({ navigation }) => {
         <View style={styles.card}>
           <Text style={styles.label}>Kamera + OCR</Text>
           <Text style={styles.helper}>Tag et billede af dagsordenen. Teksten udtrækkes automatisk.</Text>
-          <LargeButton label="Åbn kamera" onPress={handleCameraOcr} />
+          <LargeButton label="Åbn kamera" onPress={handleCameraOcr} loading={isScanning} />
           {ocrText ? <Text style={styles.preview}>{ocrText}</Text> : null}
         </View>
 
