@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { Alert, SafeAreaView, ScrollView, StyleSheet, Text, TextInput, View } from 'react-native';
 import * as ImagePicker from 'expo-image-picker';
 import { scanFromURLAsync } from 'expo-mlkit-ocr';
@@ -10,11 +10,19 @@ import { AgendaItem, useAppState } from '../contexts/AppStateContext';
 export type AgendaScreenProps = NativeStackScreenProps<RootStackParamList, 'Agenda'>;
 
 const AgendaScreen: React.FC<AgendaScreenProps> = ({ navigation }) => {
-  const { setAgenda } = useAppState();
+  const { agenda, setAgenda } = useAppState();
   const [manualText, setManualText] = useState('');
   const [ocrText, setOcrText] = useState('');
   const [isScanning, setIsScanning] = useState(false);
   const [cameraPermission, requestCameraPermission] = ImagePicker.useCameraPermissions();
+
+  useEffect(() => {
+    if (agenda.length === 0) return;
+
+    const agendaAsText = agenda.map((item) => item.text).join('\n');
+    setManualText((current) => (current ? current : agendaAsText));
+    setOcrText((current) => (current ? current : agendaAsText));
+  }, [agenda]);
 
   const parseAgenda = (text: string): AgendaItem[] =>
     text
