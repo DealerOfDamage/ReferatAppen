@@ -16,16 +16,11 @@
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#0c1117"
-      },
-      "permissions": ["CAMERA"]
-    },
-    "plugins": ["expo-image-picker", "expo-mlkit-ocr"],
-    "ios": {
-      "supportsTablet": true,
-      "infoPlist": {
-        "NSCameraUsageDescription": "Appen bruger kameraet til at scanne dagsordener med OCR.",
-        "NSPhotoLibraryAddUsageDescription": "Appen gemmer midlertidige fotos for at kunne scanne teksten."
       }
+    },
+    "plugins": ["expo-mlkit-ocr"],
+    "ios": {
+      "supportsTablet": true
     }
   }
 }
