@@ -18,7 +18,7 @@ En cross-platform mobilapp (iOS & Android) bygget med Expo/React Native til at i
 
 ## Kom i gang
 1. Installer afhængigheder: `npm install` (kræver Node 18+).
-   - Hvis du rammer `403 Forbidden` under installation, er det næsten altid proxy-miljøvariabler der blokerer trafikken. Prøv da at køre:
+   - Hvis du rammer `403 Forbidden` eller lignende netværksfejl under installation, er det næsten altid proxy-miljøvariabler der blokerer trafikken. Prøv da at køre:
 
    ```bash
    unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY npm_config_http_proxy npm_config_https_proxy
@@ -27,6 +27,7 @@ En cross-platform mobilapp (iOS & Android) bygget med Expo/React Native til at i
    npm config set registry https://registry.npmjs.org/
    npm install
    ```
+   - Fejlen `PluginError: Failed to resolve plugin for module "expo-image-picker"` betyder, at `node_modules` mangler. Den forsvinder, så snart ovenstående installation lykkes.
 
 2. Start udviklingsserveren: `npm start` (åbner Expo Dev Tools).
 3. Kør på enhed/simulator: `npm run ios` eller `npm run android`.
