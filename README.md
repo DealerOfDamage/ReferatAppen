@@ -18,6 +18,16 @@ En cross-platform mobilapp (iOS & Android) bygget med Expo/React Native til at i
 
 ## Kom i gang
 1. Installer afhængigheder: `npm install` (kræver Node 18+).
+   - Hvis du rammer `403 Forbidden` under installation, er det næsten altid proxy-miljøvariabler der blokerer trafikken. Prøv da at køre:
+
+   ```bash
+   unset http_proxy https_proxy HTTP_PROXY HTTPS_PROXY npm_config_http_proxy npm_config_https_proxy
+   npm config delete proxy
+   npm config delete https-proxy
+   npm config set registry https://registry.npmjs.org/
+   npm install
+   ```
+
 2. Start udviklingsserveren: `npm start` (åbner Expo Dev Tools).
 3. Kør på enhed/simulator: `npm run ios` eller `npm run android`.
 
