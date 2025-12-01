@@ -4,9 +4,7 @@ const path = require('path');
 const root = process.cwd();
 const nodeModulesPath = path.join(root, 'node_modules');
 const missingNodeModules = !fs.existsSync(nodeModulesPath);
-const missingImagePicker = !missingNodeModules && !fs.existsSync(path.join(nodeModulesPath, 'expo-image-picker'));
-
-if (missingNodeModules || missingImagePicker) {
+if (missingNodeModules) {
   const messages = [
     'Afhængighederne ser ikke ud til at være installeret.',
     'Kør "npm install" (eller "npm ci") i projektroden før du starter Expo.',
